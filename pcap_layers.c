@@ -111,7 +111,7 @@ handle_tcp_session(const struct tcphdr *tcp, int len, void *userdata)
     if (callback_tcp_sess)
 	callback_tcp_sess(tcp, len, userdata, callback_l7);
     else if (callback_l7)
-	callback_l7((u_char *) tcp + (tcp->th_off<<2), len, userdata);
+	callback_l7((u_char *) tcp + (tcp->th_off<<2), len - (tcp->th_off<<2), userdata);
 }
 
 void
