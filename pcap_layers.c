@@ -485,6 +485,10 @@ handle_ether(const u_char * pkt, int len, void *userdata)
     pkt += ETHER_HDR_LEN;
     len -= ETHER_HDR_LEN;
     if (ETHERTYPE_8021Q == etype) {
+	unsigned short vlan = nptohs((unsigned short *) pkt);
+	if (callback_vlan)
+	    if (0 != callback_vlan(vlan, userdata))
+		return;
 	etype = nptohs((unsigned short *)(pkt + 2));
 	pkt += 4;
 	len -= 4;
