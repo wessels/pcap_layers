@@ -491,7 +491,7 @@ handle_ether(const u_char * pkt, int len, void *userdata)
     }
     if (len < 0)
 	return;
-    /* fprintf(stderr, "GRE packet of len %d ethertype %#04x\n", len, etype); */
+    /* fprintf(stderr, "Ethernet packet of len %d ethertype %#04x\n", len, etype); */
     if (is_ethertype_ip(etype)) {
 	handle_ip((struct ip *)pkt, len, userdata);
     }
