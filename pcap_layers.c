@@ -86,6 +86,7 @@ static int _reassemble_fragments = 0;
 static void (*handle_datalink) (const u_char * pkt, int len, void *userdata)= NULL;
 
 int (*callback_ether) (const u_char * pkt, int len, void *userdata)= NULL;
+int (*callback_vlan) (unsigned short vlan, void *userdata)= NULL;
 int (*callback_ipv4) (const struct ip *ipv4, int len, void *userdata)= NULL;
 int (*callback_ipv6) (const struct ip6_hdr *ipv6, int len, void *userdata)= NULL;
 int (*callback_gre) (const u_char *pkt, int len, void *userdata)= NULL;
