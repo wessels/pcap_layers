@@ -86,6 +86,7 @@ static int _reassemble_fragments = 0;
 static void (*handle_datalink) (const u_char * pkt, int len, void *userdata)= NULL;
 
 int (*callback_ether) (const u_char * pkt, int len, void *userdata)= NULL;
+int (*callback_vlan) (unsigned short vlan, void *userdata)= NULL;
 int (*callback_ipv4) (const struct ip *ipv4, int len, void *userdata)= NULL;
 int (*callback_ipv6) (const struct ip6_hdr *ipv6, int len, void *userdata)= NULL;
 int (*callback_gre) (const u_char *pkt, int len, void *userdata)= NULL;
@@ -485,13 +486,17 @@ handle_ether(const u_char * pkt, int len, void *userdata)
     pkt += ETHER_HDR_LEN;
     len -= ETHER_HDR_LEN;
     if (ETHERTYPE_8021Q == etype) {
+	unsigned short vlan = nptohs((unsigned short *) pkt);
+	if (callback_vlan)
+	    if (0 != callback_vlan(vlan, userdata))
+		return;
 	etype = nptohs((unsigned short *)(pkt + 2));
 	pkt += 4;
 	len -= 4;
     }
     if (len < 0)
 	return;
-    /* fprintf(stderr, "GRE packet of len %d ethertype %#04x\n", len, etype); */
+    /* fprintf(stderr, "Ethernet packet of len %d ethertype %#04x\n", len, etype); */
     if (is_ethertype_ip(etype)) {
 	handle_ip((struct ip *)pkt, len, userdata);
     }

@@ -15,6 +15,7 @@
 typedef int l7_callback(const u_char *, int , void *);
 
 extern int (*callback_ether) (const u_char * pkt, int len, void *userdata);
+extern int (*callback_vlan) (unsigned short vlan, void *userdata);
 extern int (*callback_ipv4) (const struct ip *ipv4, int len, void *userdata);
 extern int (*callback_ipv6) (const struct ip6_hdr *ipv6, int len, void *userdata);
 extern int (*callback_gre) (const u_char *pkt, int len, void *userdata);
