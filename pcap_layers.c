@@ -325,8 +325,7 @@ handle_ipv6(const struct ip6_hdr *ip6, int len, void *userdata)
 	||(IPPROTO_HOPOPTS == nexthdr)	/* Hop-by-Hop options. */
 	||(IPPROTO_FRAGMENT == nexthdr)	/* fragmentation header. */
 	||(IPPROTO_DSTOPTS == nexthdr)	/* destination options. */
-	||(IPPROTO_DSTOPTS == nexthdr)	/* destination options. */
-	||(IPPROTO_AH == nexthdr)	/* destination options. */
+	||(IPPROTO_AH == nexthdr)	/* authentication header. */
 	||(IPPROTO_ESP == nexthdr)) {	/* encapsulating security payload. */
 	typedef struct {
 	    uint8_t nexthdr;
