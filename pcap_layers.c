@@ -184,7 +184,7 @@ handle_ipv4_fragment(const struct ip *ip, int len, void *userdata)
     f = calloc(1, sizeof(*f));
     assert(f);
     f->offset = (ip_off & IP_OFFMASK) << 3;
-    f->len = ntohs(ip->ip_len);
+    f->len = ntohs(ip->ip_len) - (ip->ip_hl << 2);
     f->buf = malloc(f->len);
     f->more = (ip_off & IP_MF) ? 1 : 0;
     assert(f->buf);
