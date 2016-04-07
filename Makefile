@@ -1,6 +1,7 @@
 NAME=pcap_layers
 LIB=lib${NAME}.a
 CFLAGS=-Wall -O2
+PREFIX=/usr/local
 
 
 all: ${LIB}
@@ -14,9 +15,11 @@ demo: demo.c ${NAME}.o ${NAME}.h
 	${CC} ${CFLAGS} -o $@ -I. demo.c ${NAME}.o -lpcap
 
 install: ${LIB}
-	install -C -m 644 ${LIB} /usr/local/lib
-	install -C -m 644 ${NAME}.h /usr/local/include
-	install -C -m 644 byteorder.h /usr/local/include/pcap_layers_byteorder.h
+	install -d -m 755 ${PREFIX}/lib
+	install -d -m 755 ${PREFIX}/include
+	install -C -m 644 ${LIB} ${PREFIX}/lib
+	install -C -m 644 ${NAME}.h ${PREFIX}/include
+	install -C -m 644 byteorder.h ${PREFIX}/include/pcap_layers_byteorder.h
 
 clean:
 	rm -f ${NAME}.o
