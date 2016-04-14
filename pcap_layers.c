@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2016 Duane Wessels and The Measurement Factory, Inc.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,7 +29,6 @@
 #include <netinet/in.h>
 #include <netinet/ip6.h>
 
-#include <pcap.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,12 +50,16 @@
 #include <netinet/udp.h>
 #include <netinet/tcp.h>
 
+#ifndef USE_IPV6
 #define USE_IPV6 1
+#endif
 
 #include "byteorder.h"
 #include "pcap_layers.h"
 
+#ifndef PCAP_SNAPLEN
 #define PCAP_SNAPLEN 1460
+#endif
 #ifndef ETHER_HDR_LEN
 #define ETHER_ADDR_LEN 6
 #define ETHER_TYPE_LEN 2
