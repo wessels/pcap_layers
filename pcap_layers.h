@@ -48,3 +48,7 @@ extern int (*callback_l7) (const u_char * l7, int len, void *userdata);
 
 extern void handle_pcap(u_char * userdata, const struct pcap_pkthdr *hdr, const u_char * pkt);
 extern int pcap_layers_init(int dlt, int reassemble);
+
+#ifndef IPPROTO_GRE
+#define IPPROTO_GRE 47 /* GRE encapsulation RFC 1701 */
+#endif
