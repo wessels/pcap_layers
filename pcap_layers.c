@@ -41,6 +41,10 @@
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
 
+#ifdef linux
+#include <pcap/sll.h>
+#endif
+
 #include <sys/socket.h>
 #include <net/if_arp.h>
 #include <net/if.h>
@@ -527,6 +531,28 @@ handle_ether(const u_char * pkt, int len, void *userdata)
     }
 }
 
+#ifdef linux
+void
+handle_linux_sll(const u_char * pkt, int len, void *userdata)
+{
+    struct sll_header *s = (struct sll_header *)pkt;
+    unsigned short etype, eproto;
+
+    if (len < SLL_HDR_LEN)
+	return;
+    etype = nptohs(&s->sll_pkttype);
+    if (etype == LINUX_SLL_BROADCAST || etype == LINUX_SLL_MULTICAST)
+	return;
+    eproto = nptohs(&s->sll_protocol);
+    if (eproto != ETHERTYPE_IP)
+	return;
+    pkt += SLL_HDR_LEN;
+    len -= SLL_HDR_LEN;
+    /* fprintf(stderr, "linnux cooked packet of len %d type %#04x proto %#04x\n", len, etype, eproto); */
+    handle_ip((struct ip *)pkt, len, userdata);
+}
+#endif
+
 void
 handle_pcap(u_char * userdata, const struct pcap_pkthdr *hdr, const u_char * pkt)
 {
@@ -556,6 +582,11 @@ pcap_layers_init(int dlt, int reassemble)
 #ifdef DLT_RAW
     case DLT_RAW:
 	handle_datalink = handle_raw;
+	break;
+#endif
+#ifdef linux
+    case DLT_LINUX_SLL:
+	handle_datalink = handle_linux_sll;
 	break;
 #endif
     case DLT_NULL:
