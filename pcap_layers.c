@@ -531,7 +531,7 @@ handle_ether(const u_char * pkt, int len, void *userdata)
     }
 }
 
-#ifdef linux
+#ifdef DLT_LINUX_SLL
 void
 handle_linux_sll(const u_char * pkt, int len, void *userdata)
 {
@@ -548,7 +548,29 @@ handle_linux_sll(const u_char * pkt, int len, void *userdata)
 	return;
     pkt += SLL_HDR_LEN;
     len -= SLL_HDR_LEN;
-    /* fprintf(stderr, "linnux cooked packet of len %d type %#04x proto %#04x\n", len, etype, eproto); */
+    /* fprintf(stderr, "linux cooked packet of len %d type %#04x proto %#04x\n", len, etype, eproto); */
+    handle_ip((struct ip *)pkt, len, userdata);
+}
+#endif
+
+#ifdef DLT_LINUX_SLL2
+void
+handle_linux_sll2(const u_char * pkt, int len, void *userdata)
+{
+    struct sll2_header *s = (struct sll2_header *)pkt;
+    unsigned short etype, eproto;
+
+    if (len < SLL2_HDR_LEN)
+	return;
+    etype = nptohs(&s->sll2_pkttype);
+    if (etype == LINUX_SLL_BROADCAST || etype == LINUX_SLL_MULTICAST)
+	return;
+    eproto = nptohs(&s->sll2_protocol);
+    if (eproto != ETHERTYPE_IP)
+	return;
+    pkt += SLL2_HDR_LEN;
+    len -= SLL2_HDR_LEN;
+    /* fprintf(stderr, "linux cooked2 packet of len %d type %#04x proto %#04x\n", len, etype, eproto); */
     handle_ip((struct ip *)pkt, len, userdata);
 }
 #endif
@@ -584,16 +606,21 @@ pcap_layers_init(int dlt, int reassemble)
 	handle_datalink = handle_raw;
 	break;
 #endif
-#ifdef linux
+#ifdef DLT_LINUX_SLL
     case DLT_LINUX_SLL:
 	handle_datalink = handle_linux_sll;
+	break;
+#endif
+#ifdef DLT_LINUX_SLL2
+    case DLT_LINUX_SLL2:
+	handle_datalink = handle_linux_sll2;
 	break;
 #endif
     case DLT_NULL:
 	handle_datalink = handle_null;
 	break;
     default:
-	fprintf(stderr, "unsupported data link type %d", dlt);
+	fprintf(stderr, "unsupported data link type %d\n", dlt);
 	exit(1);
 	break;
     }
